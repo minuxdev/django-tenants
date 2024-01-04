@@ -31,18 +31,40 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+# OLD
+# INSTALLED_APPS = [
+#    "django.contrib.admin",
+#    "django.contrib.auth",
+#    "django.contrib.contenttypes",
+#    "django.contrib.sessions",
+#    "django.contrib.messages",
+#    "django.contrib.staticfiles",
+#    "app",
+# ]
 
-INSTALLED_APPS = [
+# NEW
+SHARED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "core",
+]
+TENANT_APPS = [
     "app",
 ]
+INSTALLED_APPS = list(SHARED_APPS) + [
+    app for app in TENANT_APPS if app not in SHARED_APPS
+]
+
+TENANT_MODEL = "core.Client"
+TENANT_DOMAIN_MODEL = "core.Domain"
+
 
 MIDDLEWARE = [
+    "django_tenants.middleware.main.TenantMainMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -76,12 +98,29 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# OLD
+# DATABASES = {
+#    "default": {
+#        "ENGINE": "django.db.backends.sqlite3",
+#        "NAME": BASE_DIR / "db.sqlite3",
+#    }
+# }
+#
+# NEW
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django_tenants.postgresql_backend",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "localhost",
+        "NAME": "django_tenants",
+        "PORT": 5432,
     }
 }
+
+# NEW
+DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
 
 
 # Password validation
