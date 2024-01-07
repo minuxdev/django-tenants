@@ -1,0 +1,7 @@
+<h1>Availabe Subjects</h1>
+<a href="{% url 'private:create' %}">Create User</a>
+<ul>
+  {% for l in lectures %}
+  <li>{{l.name}} | {{l.grade}}</li>
+  {% endfor %}
+</ul>

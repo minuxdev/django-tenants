@@ -44,27 +44,36 @@ ALLOWED_HOSTS = []
 
 # NEW
 SHARED_APPS = [
+    "django_tenants",
+    "public",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "core",
 ]
 TENANT_APPS = [
-    "app",
+    "django.contrib.contenttypes",
+    "django.contrib.auth",
+    "django.contrib.admin",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "private",
 ]
 INSTALLED_APPS = list(SHARED_APPS) + [
     app for app in TENANT_APPS if app not in SHARED_APPS
 ]
 
-TENANT_MODEL = "core.Client"
-TENANT_DOMAIN_MODEL = "core.Domain"
+TENANT_MODEL = "public.Client"
+TENANT_DOMAIN_MODEL = "public.Domain"
+PUBLIC_SCHEMA_URLCONF = "core.urls_public"
 
+TENANT_SUBFOLDER_PREFIX = "r"
 
 MIDDLEWARE = [
-    "django_tenants.middleware.main.TenantMainMiddleware",
+    "django_tenants.middleware.TenantSubfolderMiddleware",  # for subfolders
+    # "django_tenants.middleware.main.TenantMainMiddleware", # subdomain
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -74,7 +83,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "core.urls"
+ROOT_URLCONF = "core.tenant_urls"
 
 TEMPLATES = [
     {
@@ -105,16 +114,15 @@ WSGI_APPLICATION = "core.wsgi.application"
 #        "NAME": BASE_DIR / "db.sqlite3",
 #    }
 # }
-#
-# NEW
 
+# NEW
 DATABASES = {
     "default": {
         "ENGINE": "django_tenants.postgresql_backend",
         "USER": "postgres",
         "PASSWORD": "postgres",
         "HOST": "localhost",
-        "NAME": "django_tenants",
+        "NAME": "postgres",
         "PORT": 5432,
     }
 }

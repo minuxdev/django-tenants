@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}
+    Tenant Details
+{% endblock title %}
+<br />
+{% block content %}
+    <section class="content">
+        <a href="{% url 'public:home' %}">Home</a>
+        <h1>Clients and domains</h1>
+        <ul>
+            <li>{{ tenant.schema_name }}</li>
+            <li>{{ tenant.domain.domain }}</li>
+        </ul>
+    </section>
+{% endblock content %}
